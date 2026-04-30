@@ -35,20 +35,11 @@ public class ApiApplication {
 
     @GetMapping("/country/{country}")
     public CountryDetail getCountryDetails(@PathVariable("country") String country) {
-        String name = restClient.get()
-                .uri("https://restcountries.com/v3.1/translation/{country}", country)
-                .retrieve()
-                .body(JsonNode.class).get(0)
-                .get("translations")
-                .get("tur")
-                .get("common").asString();
-
         String summary = restClient.get()
-                .uri("https://tr.wikipedia.org/api/rest_v1/page/summary/{country}", name)
+                .uri("https://tr.wikipedia.org/api/rest_v1/page/summary/{country}", country)
                 .retrieve()
                 .body(JsonNode.class).get("extract").asString();
 
-        return new CountryDetail(name, summary);
+        return new CountryDetail(country, summary);
     }
-
 }
