@@ -33,6 +33,11 @@ public class ApiApplication {
                 .build();
     }
 
+    @GetMapping("/")
+    public String home() {
+        return "Yörük projesine hoş geldiniz!";
+    }
+
     @GetMapping("/country/{country}")
     public CountryDetail getCountryDetails(@PathVariable("country") String country) {
         String summary = restClient.get()
