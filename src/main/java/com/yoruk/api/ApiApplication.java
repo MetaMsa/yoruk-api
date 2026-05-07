@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
@@ -46,5 +47,25 @@ public class ApiApplication {
                 .body(JsonNode.class).get("extract").asString();
 
         return new CountryDetail(country, summary);
+    }
+
+    @GetMapping("/visa")
+    public String getVisaInfo(
+            @RequestParam String country,
+            @RequestParam String passport) {
+
+        if (country.equalsIgnoreCase("United States of America")
+                && passport.equalsIgnoreCase("Ordinary")) {
+
+            return "Vize gerekli.";
+        }
+
+        if (country.equalsIgnoreCase("Germany")
+                && passport.equalsIgnoreCase("Special")) {
+
+            return "Vize gerekli değil.";
+        }
+
+        return "Vize durumu bilinmiyor.";
     }
 }
