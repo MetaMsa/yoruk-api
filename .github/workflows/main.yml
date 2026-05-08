@@ -1,0 +1,23 @@
+name: Daily Job
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-cron:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Restart Railway Deployment
+        run: |
+          curl -X POST "https://backboard.railway.com/graphql/v2" \
+            -H "Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "query":"mutation deploymentRestart($id: String!) { deploymentRestart(id: $id) }",
+              "variables":{
+                "id":"663936bd-fc8c-4f11-b1b7-ae34c208fca5"
+              }
+            }'
