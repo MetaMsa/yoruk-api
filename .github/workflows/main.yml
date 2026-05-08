@@ -1,23 +1,15 @@
-name: Daily Job
+name: Keep Railway Awake
 
 on:
   schedule:
-    - cron: "0 */3 * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
-  run-cron:
+  ping:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Restart Railway Deployment
+      - name: Ping Railway App
         run: |
-          curl -X POST "https://backboard.railway.com/graphql/v2" \
-            -H "Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "query":"mutation deploymentRestart($id: String!) { deploymentRestart(id: $id) }",
-              "variables":{
-                "id":"09a3c410-f0d2-46f0-bbdc-033cddd6b4f2"
-              }
-            }'
+          curl -L https://yoruk-api-production.up.railway.app/
