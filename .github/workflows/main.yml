@@ -18,6 +18,6 @@ jobs:
             -d '{
               "query":"mutation deploymentRestart($id: String!) { deploymentRestart(id: $id) }",
               "variables":{
-                "id":"663936bd-fc8c-4f11-b1b7-ae34c208fca5"
+                "id":"09a3c410-f0d2-46f0-bbdc-033cddd6b4f2"
               }
             }'
