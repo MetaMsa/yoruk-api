@@ -17,7 +17,7 @@ public class ScraperService {
     public String scrapeVisaInfo(String country, int passportIndex) throws IOException {
 
         Document doc = Jsoup.connect(
-                "https://tr.wikipedia.org/wiki/T%C3%BCrk_vatanda%C5%9Flar%C4%B1n%C4%B1n_tabi_oldu%C4%9Fu_vize_uygulamalar%C4%B1")
+                "https://tr.wikipedia.org/w/rest.php/v1/page/T%C3%BCrk_vatanda%C5%9Flar%C4%B1n%C4%B1n_tabi_oldu%C4%9Fu_vize_uygulamalar%C4%B1/html?flavor=view&redirect=true&stash=false")
                 .userAgent("YorukApi/1.0")
                 .get();
 
