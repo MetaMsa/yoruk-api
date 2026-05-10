@@ -39,15 +39,17 @@ public class Controller {
 
     @GetMapping("/visa")
     public String getVisaInfo(
-            @RequestParam String country,
+            @RequestParam String name,
+            @RequestParam String nameLong,
+            @RequestParam String formalEn,
             @RequestParam int passportIndex) {
 
-        if (country.equalsIgnoreCase("Türkiye")) {
+        if (name.equalsIgnoreCase("Türkiye")) {
             return "Serbest Dolaşım Pasaport gerekli değil";
         }
 
         try {
-            String visaInfo = scraperService.scrapeVisaInfo(country, passportIndex);
+            String visaInfo = scraperService.scrapeVisaInfo(name, nameLong, formalEn, passportIndex);
             if (visaInfo != null) {
                 return visaInfo;
             }

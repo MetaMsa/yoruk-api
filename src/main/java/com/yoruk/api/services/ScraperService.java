@@ -1,30 +1,23 @@
 package com.yoruk.api.services;
 
+import java.io.IOException;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
-import info.debatty.java.stringsimilarity.Levenshtein;
-
 @Service
 public class ScraperService {
 
-    private final Levenshtein levenshtein = new Levenshtein();
-
-    public String scrapeVisaInfo(String country, int passportIndex) throws IOException {
+    public String scrapeVisaInfo(String name, String nameLong, String formalEn, int passportIndex) throws IOException {
 
         Document doc = Jsoup.connect(
                 "https://tr.wikipedia.org/w/rest.php/v1/page/T%C3%BCrk_vatanda%C5%9Flar%C4%B1n%C4%B1n_tabi_oldu%C4%9Fu_vize_uygulamalar%C4%B1/html?flavor=view&redirect=true&stash=false")
                 .userAgent("YorukApi/1.0")
                 .get();
 
-        Element bestMatch = null;
-        double bestSimilarity = 0;
-
-        String input = country.toLowerCase();
+        Element match = null;
 
         for (Element row : doc.select("tr")) {
 
@@ -35,26 +28,15 @@ public class ScraperService {
 
             String title = link.attr("title").toLowerCase();
 
-            if (title.equals(input)) {
-                bestMatch = row;
-                bestSimilarity = 1.0;
+            if (title.equals(name.toLowerCase()) || title.equals(nameLong.toLowerCase()) || title.equals(formalEn.toLowerCase())) {
+                match = row;
                 break;
-            }
-
-            double distance = levenshtein.distance(title, input);
-
-            double similarity =
-                    1.0 - (distance / Math.max(title.length(), input.length()));
-
-            if (similarity > bestSimilarity) {
-                bestSimilarity = similarity;
-                bestMatch = row;
             }
         }
 
-        if (bestMatch != null && bestSimilarity > 0.8) {
+        if (match != null) {
 
-            var tds = bestMatch.select("td");
+            var tds = match.select("td");
 
             if (passportIndex >= 0 && passportIndex < tds.size()) {
 
