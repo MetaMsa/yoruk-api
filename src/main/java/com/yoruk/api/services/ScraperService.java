@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScraperService {
 
-    public String scrapeVisaInfo(String name, String nameLong, String formalEn, int passportIndex) throws IOException {
+    public String scrapeVisaInfo(String common, String official, int passportIndex) throws IOException {
 
         Document doc = Jsoup.connect(
                 "https://tr.wikipedia.org/w/rest.php/v1/page/T%C3%BCrk_vatanda%C5%9Flar%C4%B1n%C4%B1n_tabi_oldu%C4%9Fu_vize_uygulamalar%C4%B1/html?flavor=view&redirect=true&stash=false")
@@ -28,7 +28,7 @@ public class ScraperService {
 
             String title = link.attr("title").toLowerCase();
 
-            if (title.equals(name.toLowerCase()) || title.equals(nameLong.toLowerCase()) || title.equals(formalEn.toLowerCase())) {
+            if (title.equals(common.toLowerCase()) || title.equals(official.toLowerCase())) {
                 match = row;
                 break;
             }
