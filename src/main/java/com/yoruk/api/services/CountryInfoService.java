@@ -99,32 +99,26 @@ public class CountryInfoService {
     private CountryDetail fetch(String official, String common) {
 
         try {
-            String country;
-
             JsonNode node = restClient.get()
                     .uri("https://tr.wikipedia.org/api/rest_v1/page/summary/{country}", official)
                     .retrieve()
                     .body(JsonNode.class);
 
+            String country;
+
             country = official;
 
-            if (node == null || !node.has("extract")) {
-                node = restClient.get()
-                        .uri("https://tr.wikipedia.org/api/rest_v1/page/summary/{country}", common)
-                        .retrieve()
-                        .body(JsonNode.class);
+            return new CountryDetail(country, node.get("extract").asString());
 
-                country = common;
-            }
+        } catch (org.springframework.web.client.HttpClientErrorException.NotFound e) {
+            JsonNode node = restClient.get()
+                    .uri("https://tr.wikipedia.org/api/rest_v1/page/summary/{country}", common)
+                    .retrieve()
+                    .body(JsonNode.class);
 
-            return new CountryDetail(
-                    country,
-                    node.get("extract").asString());
+            String country = common;
 
-        } catch (Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Wikipedia verisi bulunamadı");
+            return new CountryDetail(country, node.get("extract").asString());
         }
     }
 
