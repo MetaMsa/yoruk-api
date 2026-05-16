@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.yoruk.api.model.Country;
+import com.yoruk.api.model.Visa;
 
 @Repository
-public interface CountryRepository extends JpaRepository<Country, Long> {
-    Optional<Country> findByName(String name);
+public interface VisaRepository extends JpaRepository<Visa, Long> {
+    Optional<Visa> findByNameAndPassport(String name, int passportIndex);
 }

@@ -1,19 +1,15 @@
 package com.yoruk.api.services;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import tools.jackson.databind.JsonNode;
-
 import tools.jackson.databind.ObjectMapper;
 
 import com.yoruk.api.dto.CountryDetail;
 import com.yoruk.api.model.Country;
 import com.yoruk.api.repository.CountryRepository;
-
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -2,25 +2,29 @@ package com.yoruk.api.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "countries")
-public class Country {
+@Table(name = "visas", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "name", "passport" })
+})
+public class Visa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String name;
 
-    @Column(length = 5000)
-    private String extract;
+    private int passport;
+
+    @Column(length = 5000, name = "visa_info")
+    private String visaInfo;
 
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
@@ -37,12 +41,20 @@ public class Country {
         this.name = name;
     }
 
-    public String getExtract() {
-        return extract;
+    public int getPassport() {
+        return passport;
     }
 
-    public void setExtract(String extract) {
-        this.extract = extract;
+    public void setPassport(int passport) {
+        this.passport = passport;
+    }
+
+    public String getVisaInfo() {
+        return visaInfo;
+    }
+
+    public void setVisaInfo(String visaInfo) {
+        this.visaInfo = visaInfo;
     }
 
     public LocalDateTime getLastUpdated() {

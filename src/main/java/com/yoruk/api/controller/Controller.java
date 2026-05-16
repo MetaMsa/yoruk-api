@@ -11,6 +11,7 @@ import com.yoruk.api.services.GeminiService;
 import com.yoruk.api.services.CountryInfoService;
 
 import com.yoruk.api.dto.CountryDetail;
+import com.yoruk.api.dto.VisaInfo;
 
 @RestController
 public class Controller {
@@ -38,27 +39,16 @@ public class Controller {
     }
 
     @GetMapping("/visa")
-    public String getVisaInfo(
+    public VisaInfo getVisaInfo(
             @RequestParam String common,
             @RequestParam String official,
             @RequestParam int passportIndex) {
 
         if (common.equalsIgnoreCase("Türkiye")) {
-            return "Serbest Dolaşım Pasaport gerekli değil";
+            return new VisaInfo("Türkiye", passportIndex, "Serbest Dolaşım Pasaport gerekli değil");
         }
 
-        try {
-            String visaInfo = scraperService.scrapeVisaInfo(common, official, passportIndex);
-            if (visaInfo != null) {
-                return visaInfo;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Vize durumu bilinmiyor.");
+        return scraperService.getVisaInfo(common, passportIndex, official);
     }
 
     @GetMapping("/gemini")
