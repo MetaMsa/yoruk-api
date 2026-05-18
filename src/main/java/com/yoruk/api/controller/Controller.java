@@ -6,36 +6,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.yoruk.api.services.ScraperService;
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.yoruk.api.services.GeminiService;
 import com.yoruk.api.services.CountryInfoService;
+import com.yoruk.api.services.ScraperService;
+import com.yoruk.api.services.RateLimitService;
 
 import com.yoruk.api.dto.CountryDetail;
 import com.yoruk.api.dto.VisaInfo;
+import com.yoruk.api.dto.GeminiRes;
 
 @RestController
 public class Controller {
     private final ScraperService scraperService;
     private final GeminiService geminiService;
     private final CountryInfoService countryInfoService;
+    private final RateLimitService rateLimitService;
 
     public Controller(ScraperService scraperService, GeminiService geminiService,
-            CountryInfoService countryInfoService) {
+            CountryInfoService countryInfoService, RateLimitService rateLimitService) {
         this.scraperService = scraperService;
         this.geminiService = geminiService;
         this.countryInfoService = countryInfoService;
+        this.rateLimitService = rateLimitService;
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "Yörük projesine hoş geldiniz!";
-    }
-    
     @GetMapping("/country")
     public CountryDetail getCountryDetails(
             @RequestParam String official,
             @RequestParam String common) {
-            return countryInfoService.getCountryInfo(official, common);
+        CountryDetail result = countryInfoService.getCountryInfo(official, common);
+
+        if (result == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Ülke bilgisi bulunamadı.");
+        }
+
+        return result;
     }
 
     @GetMapping("/visa")
@@ -44,31 +53,49 @@ public class Controller {
             @RequestParam String official,
             @RequestParam int passportIndex) {
 
-        if (common.equalsIgnoreCase("Türkiye")) {
+        if (common.equalsIgnoreCase("Türkiye") || official.equalsIgnoreCase("Republic of Turkey")) {
             return new VisaInfo("Türkiye", passportIndex, "Serbest Dolaşım Pasaport gerekli değil");
         }
 
-        return scraperService.getVisaInfo(common, passportIndex, official);
+        VisaInfo result = scraperService.getVisaInfo(common, passportIndex, official);
+
+        if (result == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Vize bilgisi bulunamadı.");
+        }
+
+        return result;
     }
 
     @GetMapping("/gemini")
-    public String getGeminiHint(
+    public GeminiRes getGeminiHint(
             @RequestParam String country,
-            @RequestParam String passport) {
+            @RequestParam String passport,
+            HttpServletRequest request) {
         if (country.equalsIgnoreCase("Republic of Turkey"))
-            return "";
+            return new GeminiRes("Republic of Turkey", passport, "");
 
-        try {
-            String res = geminiService.generateTextFromTextInput(country, passport);
-            if (res != null) {
-                return res;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        String remoteAddr = request.getRemoteAddr();
+        String ip = (xfHeader != null && !xfHeader.isEmpty())
+                ? xfHeader.split(",")[0]
+                : remoteAddr;
+
+        if (!rateLimitService.isAllowed(ip)) {
+            throw new ResponseStatusException(
+                    HttpStatus.TOO_MANY_REQUESTS,
+                    "Çok sayıda istek yapıldı.");
         }
 
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Gemini cevap vermedi.");
+        GeminiRes res = geminiService.getGeminiRes(country, passport);
+
+        if (res == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Gemini cevap vermedi.");
+        }
+
+        return res;
     }
 }
