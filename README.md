@@ -77,10 +77,6 @@ npm run dev
 Vize bilgileri açık kaynak sitelerden elde edilmektedir.
 Bilgiler güncel olmayabilir. Seyahat öncesinde resmi kaynakların kontrol edilmesi önerilir.
 
-## Eklenecek Özellikler
-
-* Ziyaret edilen ülkeleri kaydetme.
-
 ## Katkıda Bulunma
 
 Her türlü katkıya açığız. Hataları bildirmek veya yeni özellik önerileri için pull request gönderebilirsiniz.
