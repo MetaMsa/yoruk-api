@@ -1,6 +1,8 @@
 # Yörük
 https://yoruk.benserhat.com/
 
+[![Görsel Açıklaması](https://i.ytimg.com/vi/oy8H7u9mnFg/oar2.jpg?sqp=-oaymwEoCJUDENAFSFqQAgHyq4qpAxcIARUAAIhC2AEB4gEKCBgQAhgGOAFAAQ==&rs=AOn4CLChbCnOGAe5mrUzEoCpusVatZaAEQ&usqp=CCk)](https://www.youtube.com/shorts/oy8H7u9mnFg)
+
 Yörük, seyahat planlamasını kolaylaştıran bir web uygulamasıdır.
 
 Uygulama; ülke bilgileri, pasaport türüne göre vize gereksinimleri ve seyahat önerileri sunar.
