@@ -80,7 +80,9 @@ public class GeminiService {
             gemini.setGeminiRes(refreshed.gemini_res());
             gemini.setLastUpdated(LocalDateTime.now());
 
-            geminiRepository.save(gemini);
+            try{
+                geminiRepository.save(gemini);
+            } catch (Exception e) {}
 
             redisTemplate.opsForValue().set(redisKey, refreshed, Duration.ofHours(24));
 
@@ -100,7 +102,9 @@ public class GeminiService {
         entity.setGeminiRes(asked.gemini_res());
         entity.setLastUpdated(LocalDateTime.now());
 
-        geminiRepository.save(entity);
+        try{
+            geminiRepository.save(entity);
+        } catch (Exception e) {}
 
         redisTemplate.opsForValue().set(redisKey, asked, Duration.ofHours(24));
 
@@ -146,8 +150,12 @@ public class GeminiService {
     }
 
     private Gemini findFromDb(String name, String passport) {
-        return geminiRepository.findByNameAndPassport(name, passport)
+        try{
+            return geminiRepository.findByNameAndPassport(name, passport)
                 .orElse(null);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     private GeminiRes map(Gemini v) {

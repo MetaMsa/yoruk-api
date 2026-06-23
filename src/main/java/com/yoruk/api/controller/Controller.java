@@ -53,7 +53,7 @@ public class Controller {
             @RequestParam String official,
             @RequestParam int passportIndex) {
 
-        if (common.equalsIgnoreCase("Türkiye") || official.equalsIgnoreCase("Republic of Turkey")) {
+        if (common.equalsIgnoreCase("Türkiye") || official.equalsIgnoreCase("Republic of Türkiye")) {
             return new VisaInfo("Türkiye", passportIndex, "Serbest Dolaşım Pasaport gerekli değil");
         }
 
@@ -73,8 +73,8 @@ public class Controller {
             @RequestParam String country,
             @RequestParam String passport,
             HttpServletRequest request) {
-        if (country.equalsIgnoreCase("Republic of Turkey"))
-            return new GeminiRes("Republic of Turkey", passport, "");
+        if (country.equalsIgnoreCase("Republic of Türkiye"))
+            return new GeminiRes("Republic of Türkiye", passport, "");
 
         String xfHeader = request.getHeader("X-Forwarded-For");
         String remoteAddr = request.getRemoteAddr();

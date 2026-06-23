@@ -1,18 +1,18 @@
 package com.yoruk.api.services;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.data.redis.core.RedisTemplate;
-
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 
 import com.yoruk.api.dto.CountryDetail;
 import com.yoruk.api.model.Country;
 import com.yoruk.api.repository.CountryRepository;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class CountryInfoService {
@@ -71,7 +71,9 @@ public class CountryInfoService {
             country.setExtract(refreshed.extract());
             country.setLastUpdated(LocalDateTime.now());
 
-            countryRepository.save(country);
+            try{
+                countryRepository.save(country);
+            } catch (Exception e) {}
 
             redisTemplate.opsForValue().set(redisKey, refreshed, Duration.ofHours(24));
 
@@ -85,7 +87,9 @@ public class CountryInfoService {
         entity.setExtract(scraped.extract());
         entity.setLastUpdated(LocalDateTime.now());
 
-        countryRepository.save(entity);
+        try{
+            countryRepository.save(entity);
+        } catch (Exception e) {}
 
         redisTemplate.opsForValue().set(redisKey, scraped, Duration.ofHours(24));
 
@@ -119,8 +123,12 @@ public class CountryInfoService {
     }
 
     private Country findFromDb(String name) {
-        return countryRepository.findByName(name)
+        try {
+            return countryRepository.findByName(name)
                 .orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private CountryDetail map(Country c) {

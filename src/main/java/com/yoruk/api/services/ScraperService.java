@@ -76,7 +76,9 @@ public class ScraperService {
             visa.setVisaInfo(refreshed.visa_info());
             visa.setLastUpdated(LocalDateTime.now());
 
-            visaRepository.save(visa);
+            try{
+                visaRepository.save(visa);
+            } catch (Exception e) {}
 
             redisTemplate.opsForValue().set(redisKey, refreshed, Duration.ofHours(24));
 
@@ -96,7 +98,9 @@ public class ScraperService {
         entity.setVisaInfo(scraped.visa_info());
         entity.setLastUpdated(LocalDateTime.now());
 
-        visaRepository.save(entity);
+        try{
+            visaRepository.save(entity);
+        } catch (Exception e) {}
 
         redisTemplate.opsForValue().set(redisKey, scraped, Duration.ofHours(24));
 
@@ -145,8 +149,12 @@ public class ScraperService {
     }
 
     private Visa findFromDb(String name, int passportIndex) {
-        return visaRepository.findByNameAndPassport(name, passportIndex)
+        try{
+            return visaRepository.findByNameAndPassport(name, passportIndex)
                 .orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private VisaInfo map(Visa v) {
